@@ -15,5 +15,16 @@ public class GlobalConst {
     public static final String url0 = "&grant_type=authorization_code";
 
 
+    /**
+     * 文章标题等简介
+     */
+    public static final String ARTICLE_INTR = "redis:article:intr";
+
+    /**
+     * 文章总数
+     */
+    public static final String ARTICLE_COUNT = "redis:article:count";
+
+
 
 }

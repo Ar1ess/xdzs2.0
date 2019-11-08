@@ -34,5 +34,5 @@ public class User {
     /**
      * 用户步数
      */
-    private Integer userPace;
+    private String userPace;
 }

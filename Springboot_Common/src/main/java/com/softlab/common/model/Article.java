@@ -63,4 +63,9 @@ public class Article {
      * 文章标签
      */
     private String category;
+
+    /**
+     * 文章图片
+     */
+    private String pic;
 }
