@@ -6,6 +6,7 @@ import lombok.Data;
  * @author LiXiwen
  * @date 2019/11/8 11:15
  */
+
 @Data
 public class Pace {
     /**
