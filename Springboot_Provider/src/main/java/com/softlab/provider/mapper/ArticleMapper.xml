@@ -22,8 +22,8 @@
                u.user_icon as icon, u.user_name as userName,
                p.paiwei as paiwei, p.img as img
         from article a
-                 inner join user u on u.open_id = a.open_id
-                 inner join pace p on u.open_id = p.open_id
+        inner join user u on u.open_id = a.open_id
+        inner join pace p on u.open_id = p.open_id
         where a.title like CONCAT(CONCAT('%',#{arg0},'%'))
     </select>
 

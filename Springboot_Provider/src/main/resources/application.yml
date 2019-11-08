@@ -24,3 +24,16 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
+
+
+  redis:
+    database: 0
+    host: 39.97.112.80
+    port: 6379
+    password:
+    jedis:
+      pool:
+        max-idle: 9
+        max-wait: -1
+        min-idle: 0
+    timeout: 1000
