@@ -1,12 +1,10 @@
 package com.softlab.provider.service.impl;
 
-import com.softlab.common.GlobalConst;
 import com.softlab.common.RestData;
 import com.softlab.common.model.Pace;
 import com.softlab.common.util.AES;
 import com.softlab.common.util.HttpRequestor;
 import com.softlab.common.util.JsonUtil;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -44,9 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RestData decrypt(Pace pace) throws AppException {
-        byte[] resultByte = AES.decrypt(Base64.decodeBase64(pace.getEncryptedData()),
-                Base64.decodeBase64(pace.getSessionKey()),
-                Base64.decodeBase64(pace.getIv()));
+//        byte[] resultByte = AES.decrypt(Base64.decodeBase64(pace.getEncryptedData()),
+//                Base64.decodeBase64(pace.getSessionKey()),
+//                Base64.decodeBase64(pace.getIv()));
         return null;
     }
 }
