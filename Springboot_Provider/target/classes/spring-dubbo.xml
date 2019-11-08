@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 应用配置，不要与提供方相同 -->
+    <dubbo:application name="xdzs-provider"/>
+
+    <!-- 注册中心配置，使用zookeeper注册中心暴露服务地址 -->
+    <dubbo:registry address="zookeeper://192.168.1.104:2181" timeout="60000" />
+
+    <!-- 用dubbo协议在20880端口暴露服务 -->
+    <dubbo:protocol name="dubbo" port="20880"/>
+
+    <!--关闭服务消费方所有服务的启动检查。dubbo缺省会在启动时检查依赖的服务是否可用，不可用时会抛出异常，
+    阻止Spring初始化完成。-->
+    <dubbo:consumer check="false" />
+
+    <!-- 使用注解方式暴露接口，会自动扫描package下所有包中dubbo相关的注解，
+    这样就不用在xml中再针对每个服务接口配置dubbo:service interface-->
+    <dubbo:annotation package="com.softlab.provider.service.impl"/>
+
+
+    <!--   xml配置方式
+    <bean id="userService" class="com.softlab.provider.service.impl.UserServiceImpl"/>
+    <dubbo:service interface="com.softlab.common.service.UserService" ref="userService"/>
+    -->
+
+</beans>

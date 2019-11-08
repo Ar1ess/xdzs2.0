@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 应用配置，不要与提供方相同 -->
+    <dubbo:application name="xdzs-consumer"/>
+
+    <!-- 注册中心配置，使用zookeeper注册中心暴露服务地址 -->
+    <dubbo:registry address="zookeeper://192.168.1.104:2181" timeout="60000" check="false" />
+
+    <dubbo:protocol name="dubbo" port="20881"/>
+
+    <!--基于注解方式,会自动注入spring容器-->
+    <dubbo:annotation package="com.softlab.customer.api" />
+
+    <!-- 生成远程服务代理，可以和本地bean一样使用demoService 基于xml方式-->
+    <!--<dubbo:reference id="userService" check="false" interface="com.softlab.common.service.UserService" />-->
+
+</beans>
