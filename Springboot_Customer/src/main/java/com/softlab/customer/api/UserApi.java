@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.softlab.common.RestData;
 import com.softlab.common.exception.AppException;
 import com.softlab.common.model.Pace;
+import com.softlab.common.model.vo.DecryptVo;
 import com.softlab.common.service.UserService;
 import com.softlab.common.util.JsonUtil;
 import org.slf4j.Logger;
@@ -35,12 +36,12 @@ public class UserApi {
     }
 
     @PostMapping(value = "/decrypt")
-    public RestData decrypt(@RequestBody Pace pace) {
-        logger.info("pace : " + JsonUtil.getJsonString(pace));
+    public RestData decrypt(@RequestBody DecryptVo decryptVo) {
+        logger.info("pace : " + JsonUtil.getJsonString(decryptVo));
 
         Map<String, Object> map = new HashMap<>(8);
 
-
+        return userService.decrypt(decryptVo);
     }
 
 }
