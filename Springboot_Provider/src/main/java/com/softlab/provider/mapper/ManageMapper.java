@@ -1,7 +1,10 @@
 package com.softlab.provider.mapper;
 
+import com.softlab.common.model.vo.ArticleVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author : Ar1es
@@ -11,6 +14,13 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface ManageMapper {
+
+
+    /**
+     * 审核文章列表
+     * @return List<ArticleVo>
+     */
+    List<ArticleVo> selectAllNotPassArticle();
 
 
     /**

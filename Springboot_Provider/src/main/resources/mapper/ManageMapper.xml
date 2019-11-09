@@ -6,6 +6,27 @@
 
 <mapper namespace="com.softlab.provider.mapper.ManageMapper">
 
+    <select id="selectAllNotPassArticle" resultType="com.softlab.common.model.vo.ArticleVo">
+        SELECT
+            a.article_id AS articleId,
+            a.title AS title,
+            a.time AS time,
+            a.view_number AS viewNumber,
+            a.comment_number AS commentNumber,
+            a.category AS category,
+            a.pic AS pic,
+            u.user_icon AS icon,
+            u.user_name AS userName,
+            p.paiwei AS paiwei,
+            p.img AS img
+        FROM
+            article a
+            INNER JOIN user u ON u.open_id = a.open_id
+            INNER JOIN pace p ON u.open_id = p.open_id
+        WHERE
+            a.is_pass = 0
+    </select>
+
     <update id="updatePassArticle" parameterType="java.lang.Integer">
         update article
         set is_pass = 1
@@ -18,4 +39,8 @@
         set c_is_pass = 1
         where comment_id = #{arg0}
     </update>
+
+
+
+
 </mapper>

@@ -18,9 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*", allowCredentials = "true", allowedHeaders = "*")
 public class ArticleApi {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserApi.class);
+    private static final Logger logger = LoggerFactory.getLogger(ArticleApi.class);
 
     @Reference
     private ArticleService articleService;
+
+
+
+
 
 }

@@ -11,7 +11,10 @@ import com.softlab.common.service.ArticleService;
 import com.softlab.common.util.DateUtil;
 import com.softlab.provider.mapper.ArticleMapper;
 import com.softlab.provider.mapper.CommentMapper;
+import com.softlab.provider.mapper.ManageMapper;
 import com.softlab.provider.mapper.RedisMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -26,19 +29,25 @@ import java.util.*;
 @org.springframework.stereotype.Service
 public class ArticleServiceImpl implements ArticleService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ArticleServiceImpl.class);
+
+    private final ArticleMapper articleMapper;
+    private final CommentMapper commentMapper;
+    private final ManageMapper manageMapper;
+    private final RedisMapper redisMapper;
 
     @Autowired
-    private ArticleMapper articleMapper;
-
-    @Autowired
-    private CommentMapper commentMapper;
-
-    @Autowired
-    private RedisMapper redisMapper;
+    public ArticleServiceImpl(ArticleMapper articleMapper, CommentMapper commentMapper, ManageMapper manageMapper, RedisMapper redisMapper) {
+        this.redisMapper = redisMapper;
+        this.articleMapper = articleMapper;
+        this.commentMapper = commentMapper;
+        this.manageMapper = manageMapper;
+    }
 
 
     @Override
     public List<Object> getAllArticle() {
+        //查询缓存是否命中
         if (redisMapper.hasKey(GlobalConst.ARTICLE_INTR)) {
             return redisMapper.lGet(GlobalConst.ARTICLE_INTR, 0, -1);
         }
@@ -55,7 +64,6 @@ public class ArticleServiceImpl implements ArticleService {
                 }
                 map.put("commentsNumber", art.getCommentNumber());
                 map.put("icon", art.getIcon());
-
                 map.put("writer", art.getUserName());
                 if (null != art.getPaiwei()) {
                     map.put("userPaiwei", art.getPaiwei());
@@ -148,7 +156,6 @@ public class ArticleServiceImpl implements ArticleService {
                     map.put("pic", art.getPic());
                 }
                 map.put("commentsNumber", art.getCommentNumber());
-
                 map.put("userPaiweiImg", art.getImg());
                 map.put("category", art.getCategory());
                 map.put("writer", art.getUserName());
@@ -170,9 +177,9 @@ public class ArticleServiceImpl implements ArticleService {
         if (null != article) {
             article.setTime(DateUtil.localTimeToTimestamp());
             article.setIsPass(0);
+            article.setViewNumber(0);
             article.setCommentNumber(0);
             article.setLikeNumber(0);
-            article.setCommentNumber(0);
 
             int success = articleMapper.insertArticle(article);
             if (0 < success) {
@@ -206,7 +213,11 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public int deleteArticle(Integer id) {
         int flag = articleMapper.deleteArticle(id);
-        if (0 == flag) {
+        if (0 < flag) {
+            logger.info("删除文章id = " + id + "成功, 将删除缓存");
+            redisMapper.del(GlobalConst.ARTICLE_INTR);
+            logger.info("缓存删除成功");
+        } else {
             throw new AppException(ErrorMessage.SYSTEM_ERROR);
         }
         return flag;
@@ -215,11 +226,67 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public int getArticleCount(String openId) {
+        //查询缓存是否命中
         if (redisMapper.hasKey(GlobalConst.ARTICLE_COUNT + openId)) {
             return (int)(redisMapper.get(GlobalConst.ARTICLE_COUNT + openId));
         }
         int count = articleMapper.selectArticleCountByOpenId(openId);
         redisMapper.set(GlobalConst.ARTICLE_COUNT + openId, count);
         return count;
+    }
+
+    @Override
+    public List<Map<String, Object>> getAllNotPassArticle() {
+        List<Map<String, Object>> array = new ArrayList<>();
+        List<ArticleVo> rtt = manageMapper.selectAllNotPassArticle();
+        if (null != rtt) {
+            for (ArticleVo art : rtt) {
+                Map<String, Object> ma = new HashMap<>(8);
+                ma.put("time", DateUtil.timestampToString(art.getTime()));
+                if (null != art.getPaiwei()) {
+                    ma.put("userPaiwei", art.getPaiwei());
+                } else {
+                    ma.put("userPaiwei", "");
+                }
+                ma.put("writer", art.getUserName());
+                ma.put("id", art.getArticleId());
+                if (null != art.getPic()) {
+                    ma.put("pic", art.getPic());
+                }
+                ma.put("commentsNumber", art.getCommentNumber());
+                ma.put("userPaiweiImg", art.getImg());
+                ma.put("category", art.getCategory());
+                ma.put("title", art.getTitle());
+                ma.put("icon", art.getIcon());
+                array.add(ma);
+            }
+        } else {
+            throw new AppException(ErrorMessage.SYSTEM_ERROR);
+        }
+        return array;
+    }
+
+    @Override
+    public int updateArticlePass(Integer id) {
+        int flag = manageMapper.updatePassArticle(id);
+        if (0 < flag) {
+            logger.info("审核文章id = " + id + "成功, 将删除缓存");
+            redisMapper.del(GlobalConst.ARTICLE_INTR);
+            logger.info("缓存删除成功");
+        } else {
+            throw new AppException(ErrorMessage.SYSTEM_ERROR);
+        }
+
+
+        return flag;
+    }
+
+    @Override
+    public int updateCommentPass(Integer id) {
+        int flag = manageMapper.updatePassComment(id);
+        if (0 == flag) {
+            throw new AppException(ErrorMessage.SYSTEM_ERROR);
+        }
+        return flag;
     }
 }
