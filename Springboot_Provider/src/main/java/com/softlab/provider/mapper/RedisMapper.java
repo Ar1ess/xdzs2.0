@@ -30,7 +30,7 @@ public class RedisMapper {
      *            键
      * @param time
      *            时间(秒)
-     * @return
+     * @return true成功 false失败
      */
     public boolean expire(String key, long time) {
         try {
@@ -525,7 +525,7 @@ public class RedisMapper {
      */
     public boolean lSet(String key, Object value) {
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            redisTemplate.opsForList().leftPush(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -546,7 +546,7 @@ public class RedisMapper {
      */
     public boolean lSet(String key, Object value, long time) {
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            redisTemplate.opsForList().leftPush(key, value);
             if (time > 0) {
                 expire(key, time);
             }
@@ -568,7 +568,7 @@ public class RedisMapper {
      */
     public boolean lSet(String key, List<Object> value) {
         try {
-            redisTemplate.opsForList().rightPushAll(key, value);
+            redisTemplate.opsForList().leftPushAll(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -589,7 +589,7 @@ public class RedisMapper {
      */
     public boolean lSet(String key, List<Object> value, long time) {
         try {
-            redisTemplate.opsForList().rightPushAll(key, value);
+            redisTemplate.opsForList().leftPushAll(key, value);
             if (time > 0){
                 expire(key, time);
             }

@@ -1,5 +1,10 @@
 package com.softlab.customer.api;
 
+import com.alibaba.dubbo.config.annotation.Reference;
+import com.softlab.common.service.ArticleService;
+import com.softlab.common.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,5 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin(origins = "*", allowCredentials = "true", allowedHeaders = "*")
 public class ArticleApi {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserApi.class);
+
+    @Reference
+    private ArticleService articleService;
 
 }

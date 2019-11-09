@@ -2,7 +2,7 @@ package com.softlab.common.service;
 
 import com.softlab.common.model.Article;
 import com.softlab.common.model.Comment;
-import com.softlab.common.model.vo.ArticleVo;
+
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
 public interface ArticleService {
 
 
-    List<ArticleVo> getAllArticle();
+    List<Object> getAllArticle();
 
 
     Map<String, Object> getArticleDetail(Integer id);

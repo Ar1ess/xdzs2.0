@@ -14,7 +14,6 @@ public class GlobalConst {
 
     public static final String url0 = "&grant_type=authorization_code";
 
-
     /**
      * 文章标题等简介
      */
