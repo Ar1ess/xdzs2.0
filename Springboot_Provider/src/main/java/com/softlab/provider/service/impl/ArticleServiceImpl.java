@@ -1,22 +1,30 @@
 package com.softlab.provider.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.qiniu.api.auth.AuthException;
 import com.softlab.common.ErrorMessage;
 import com.softlab.common.GlobalConst;
 import com.softlab.common.exception.AppException;
 import com.softlab.common.model.Article;
 import com.softlab.common.model.Comment;
 import com.softlab.common.model.vo.ArticleVo;
+import com.softlab.common.model.vo.CommentVo;
 import com.softlab.common.service.ArticleService;
 import com.softlab.common.util.DateUtil;
+import com.softlab.common.util.ExecuteResult;
+import com.softlab.provider.CommonUtil;
+import com.softlab.provider.QiniuUtil;
 import com.softlab.provider.mapper.ArticleMapper;
 import com.softlab.provider.mapper.CommentMapper;
 import com.softlab.provider.mapper.ManageMapper;
 import com.softlab.provider.mapper.RedisMapper;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -172,6 +180,28 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public List<Map<String, Object>> getCommentByArtcileId(Integer id) {
+        List<Map<String, Object>> array = new ArrayList<>();
+        List<CommentVo> list = commentMapper.selectCommentByArticleId(id);
+        if (null != list) {
+            for (CommentVo comment1 : list) {
+                Map<String, Object> map = new HashMap<>(8);
+                map.put("writer", comment1.getUserName());
+                map.put("content", comment1.getCContent());
+                map.put("time", DateUtil.timestampToString(comment1.getCTime()));
+                map.put("likesNumber", comment1.getCLikeNumber());
+                map.put("userPaiwei", comment1.getPaiwei());
+                map.put("userPaiweiImg", comment1.getImg());
+                map.put("icon", comment1.getIcon());
+                array.add(map);
+            }
+        } else {
+            throw new AppException(ErrorMessage.SYSTEM_ERROR);
+        }
+        return array;
+    }
+
+    @Override
     public int insertArticle(Article article) {
         int flag = 0;
         if (null != article) {
@@ -214,9 +244,11 @@ public class ArticleServiceImpl implements ArticleService {
     public int deleteArticle(Integer id) {
         int flag = articleMapper.deleteArticle(id);
         if (0 < flag) {
-            logger.info("删除文章id = " + id + "成功, 将删除缓存");
-            redisMapper.del(GlobalConst.ARTICLE_INTR);
-            logger.info("缓存删除成功");
+            if (redisMapper.hasKey(GlobalConst.ARTICLE_INTR)) {
+                logger.info("删除文章id = " + id + "成功, 将删除缓存");
+                redisMapper.del(GlobalConst.ARTICLE_INTR);
+                logger.info("缓存删除成功");
+            }
         } else {
             throw new AppException(ErrorMessage.SYSTEM_ERROR);
         }
@@ -270,14 +302,14 @@ public class ArticleServiceImpl implements ArticleService {
     public int updateArticlePass(Integer id) {
         int flag = manageMapper.updatePassArticle(id);
         if (0 < flag) {
-            logger.info("审核文章id = " + id + "成功, 将删除缓存");
-            redisMapper.del(GlobalConst.ARTICLE_INTR);
-            logger.info("缓存删除成功");
+            if(redisMapper.hasKey(GlobalConst.ARTICLE_INTR)){
+                logger.info("审核文章id = " + id + "成功, 将删除缓存");
+                redisMapper.del(GlobalConst.ARTICLE_INTR);
+                logger.info("缓存删除成功");
+            }
         } else {
             throw new AppException(ErrorMessage.SYSTEM_ERROR);
         }
-
-
         return flag;
     }
 
@@ -288,5 +320,36 @@ public class ArticleServiceImpl implements ArticleService {
             throw new AppException(ErrorMessage.SYSTEM_ERROR);
         }
         return flag;
+    }
+
+    @Override
+    public int deleteComment(Integer id) {
+        int flag = commentMapper.deleteComment(id);
+        if (0 == flag) {
+            throw new AppException(ErrorMessage.SYSTEM_ERROR);
+        }
+        return flag;
+    }
+
+    @Override
+    public String qiniuUpload(MultipartFile file) {
+        ExecuteResult<String> executeResult = new ExecuteResult<String>();
+        QiniuUtil qiniuUtil = new QiniuUtil();
+        CommonUtil commonUtil = new CommonUtil();
+        try {
+            File file_up = commonUtil.multipartToFile(file);
+
+            String filenameExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
+
+            executeResult = qiniuUtil.uploadFile(file_up, filenameExtension);
+
+            if (!executeResult.isSuccess()) {
+                return "失败" + executeResult.getErrorMessages();
+            }
+
+        } catch (AuthException | JSONException e) {
+            logger.error("AuthException", e);
+        }
+        return executeResult.getResult();
     }
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softlab.provider.mapper.MendMapper">
+
+    <select id="selectMendById" parameterType="java.lang.Integer" resultType="com.softlab.common.model.Mend">
+        SELECT
+            area_id AS areaId,
+            NAME AS NAME,
+            number AS number,
+            phone AS phone,
+            location AS location,
+            context AS context,
+            time AS time
+        FROM
+            mend
+        WHERE
+            area_id = #{arg0}
+        LIMIT
+            1
+    </select>
+
+    <insert id="insertMend" parameterType="com.softlab.common.model.Mend">
+        INSERT INTO mend(area_id, name, number, phone, location, context, time)
+        VALUES
+               (#{areaId}, #{name}, #{number}, #{phone}, #{location}, #{context}, #{time})
+    </insert>
+
+    <select id="selectAllMend" resultType="com.softlab.common.model.Mend">
+        SELECT
+            area_id AS areaId,
+            NAME AS NAME,
+            number AS number,
+            phone AS phone,
+            location AS location,
+            context AS context,
+            time AS time
+        FROM
+            mend
+    </select>
+
+    <delete id="deleteMend" parameterType="java.lang.Integer">
+        DELETE
+        FROM
+            mend
+        WHERE
+            area_id = #{id}
+    </delete>
+
+
+</mapper>

@@ -2,6 +2,7 @@ package com.softlab.provider.mapper;
 
 import com.softlab.common.model.Comment;
 import com.softlab.common.model.vo.CommentVo;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +18,15 @@ import java.util.List;
 @Repository
 public interface CommentMapper {
 
+
+    /**
+     * 根据文章查找所有评论
+     * @param id
+     * @return List<CommentVo>
+     */
+    List<CommentVo> selectCommentByArticleId(Integer id);
+
+
     /**
      * 添加评论
      * @param comment
@@ -26,10 +36,13 @@ public interface CommentMapper {
 
 
     /**
-     * 根据文章查找所有评论
+     * 删除评论
      * @param id
-     * @return List<CommentVo>
+     * @return 0 -- 删除失败 1 --删除成功
      */
-    List<CommentVo> selectCommentByArticleId(Integer id);
+    @Delete("delete from comment where comment_id = #{arg0}")
+    int deleteComment(Integer id);
+
+
 
 }

@@ -2,6 +2,7 @@ package com.softlab.common.service;
 
 import com.softlab.common.model.Article;
 import com.softlab.common.model.Comment;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
@@ -49,6 +50,14 @@ public interface ArticleService {
 
 
     /**
+     * 根据文章ID查询所有评论
+     * @param id
+     * @return List<Map<String, Object>>
+     */
+
+    List<Map<String, Object>> getCommentByArtcileId(Integer id);
+
+    /**
      * 添加文章
      * @param article
      * @return 0 -- 添加失败 1 -- 添加成功
@@ -66,6 +75,7 @@ public interface ArticleService {
 
     /**
      * 删除文章
+     * 删除redis
      * @param id
      * @return 0 -- 删除失败 1 -- 删除成功
      */
@@ -90,8 +100,9 @@ public interface ArticleService {
 
     /**
      * 审核文章
+     * 删除redis
      * @param id
-     * @return 0 -- 删除失败 1 -- 删除成功
+     * @return 0 -- 修改失败 1 -- 修改成功
      */
     int updateArticlePass(Integer id);
 
@@ -99,9 +110,25 @@ public interface ArticleService {
     /**
      * 审核评论
      * @param id
-     * @return 0 -- 删除失败 1 -- 删除成功
+     * @return 0 -- 修改失败 1 -- 修改成功
      */
     int updateCommentPass(Integer id);
+
+
+    /**
+     * 删除评论
+     * @param id
+     * @return 0 -- 删除失败 1 -- 删除成功
+     */
+    int deleteComment(Integer id);
+
+
+    /**
+     * 上传文件
+     * @param file
+     * @return String
+     */
+    String qiniuUpload(MultipartFile file);
 
 
 

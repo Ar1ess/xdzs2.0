@@ -104,11 +104,10 @@
     </select>
 
     <insert id="insertArticle" parameterType="com.softlab.common.model.Article">
-        insert into article(
-            title, open_id, time, content, pic, view_number, like_number, comment_number, is_pass, category
-        ) values (
-            #{title}, #{openId}, #{time}, #{content}, #{pic}, #{viewNumber}, #{likeNumber},
-            #{commentNumber}, #{isPass}, #{category}
+        INSERT INTO article ( title, open_id, time, content, pic, view_number, like_number, comment_number, is_pass, category )
+        VALUES
+        ( #{title}, #{openId}, #{time}, #{content}, #{pic}, #{viewNumber}, #{likeNumber},
+          #{commentNumber}, #{isPass}, #{category}
         )
     </insert>
 

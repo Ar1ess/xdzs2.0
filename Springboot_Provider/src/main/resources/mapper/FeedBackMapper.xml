@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softlab.provider.mapper.FeedBackMapper">
+
+    <select id="selectAllFeedBack" resultType="com.softlab.common.model.FeedBack">
+        SELECT
+            f_id AS fId,
+            NAME AS NAME,
+            number AS number,
+            phone AS phone,
+            colleage_major AS colleageMajor,
+            detail AS detail,
+            time AS time
+        FROM
+            feedback
+    </select>
+
+    <insert id="insertFeedBack" parameterType="com.softlab.common.model.FeedBack">
+        INSERT INTO feedback ( f_id, NAME, number, phone, colleage_major, detail, time )
+        VALUES
+        (#{fId}, #{name}, #{number}, #{phone}, #{colleageMajor}, #{detail}, #{time})
+    </insert>
+
+    <delete id="deleteFeedBack" parameterType="java.lang.Integer">
+        DELETE
+        FROM
+            feedback
+        WHERE
+            f_id = #{arg0}
+    </delete>
+
+</mapper>
