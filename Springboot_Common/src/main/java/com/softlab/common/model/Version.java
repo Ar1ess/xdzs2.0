@@ -21,5 +21,5 @@ public class Version {
     /**
      * 版本说明
      */
-    private String text;
+    private String data;
 }

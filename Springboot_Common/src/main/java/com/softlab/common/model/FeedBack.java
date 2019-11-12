@@ -33,7 +33,7 @@ public class FeedBack {
     /**
      * 专业
      */
-    private String collageMajor;
+    private String colleageMajor;
 
     /**
      * 反馈信息

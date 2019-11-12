@@ -18,6 +18,10 @@ public class AppException extends RuntimeException{
         this.message = message;
     }
 
+    public AppException(String message) {
+        this.message = message;
+    }
+
     public int getCode() {
         return code;
     }

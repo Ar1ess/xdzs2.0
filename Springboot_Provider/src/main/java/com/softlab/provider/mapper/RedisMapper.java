@@ -30,7 +30,7 @@ public class RedisMapper {
      *            键
      * @param time
      *            时间(秒)
-     * @return
+     * @return true成功 false失败
      */
     public boolean expire(String key, long time) {
         try {
@@ -525,7 +525,7 @@ public class RedisMapper {
      */
     public boolean lSet(String key, Object value) {
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            redisTemplate.opsForList().leftPush(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -546,7 +546,7 @@ public class RedisMapper {
      */
     public boolean lSet(String key, Object value, long time) {
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            redisTemplate.opsForList().leftPush(key, value);
             if (time > 0) {
                 expire(key, time);
             }
@@ -568,7 +568,7 @@ public class RedisMapper {
      */
     public boolean lSet(String key, List<Object> value) {
         try {
-            redisTemplate.opsForList().rightPushAll(key, value);
+            redisTemplate.opsForList().leftPushAll(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -589,7 +589,7 @@ public class RedisMapper {
      */
     public boolean lSet(String key, List<Object> value, long time) {
         try {
-            redisTemplate.opsForList().rightPushAll(key, value);
+            redisTemplate.opsForList().leftPushAll(key, value);
             if (time > 0){
                 expire(key, time);
             }
@@ -639,6 +639,66 @@ public class RedisMapper {
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+
+    /**
+     * 添加指定元素到有序集合中
+     * @param key
+     * @param score
+     * @param value
+     * @return
+     */
+    public boolean sortSetAdd(String key,double score,String value){
+        try{
+            return redisTemplate.opsForZSet().add(key,value,score);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 有序集合中对指定成员的分数加上增量 increment
+     * @param key
+     * @param value
+     * @param i
+     * @return
+     */
+    public double sortSetZincrby(String key,String value,double i){
+        try {
+            //返回新增元素后的分数
+            return redisTemplate.opsForZSet().incrementScore(key, value, i);
+        }catch(Exception e){
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * 获得有序集合指定范围元素 (从大到小)
+     * @param key
+     * @param start
+     * @param end
+     * @return
+     */
+    public Set sortSetRange(String key,int start,int end){
+        try {
+            return redisTemplate.opsForZSet().reverseRange(key, start, end);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    public double getScore(Object key, Object value) {
+        try {
+            return redisTemplate.opsForZSet().score(key, value);
+        }catch (Exception e){
+            e.printStackTrace();
+            return -1;
         }
     }
 }
