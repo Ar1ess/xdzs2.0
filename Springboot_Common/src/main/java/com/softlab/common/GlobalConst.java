@@ -34,6 +34,11 @@ public class GlobalConst {
      */
     public static final String RATE_TIME = "redis:rate:time";
 
+    /**
+     * 版本信息
+     */
+    public static final String VERSION = "redis:version";
+
 
 
 }
