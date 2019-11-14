@@ -1,9 +1,11 @@
 package com.softlab.common.model.vo;
 
+import java.io.Serializable;
+
 /**
  * Created by LiXiwen on 2019/3/25.
  **/
-public class DecryptVo {
+public class DecryptVo implements Serializable {
 
     private String encryptedData;
     private String iv;

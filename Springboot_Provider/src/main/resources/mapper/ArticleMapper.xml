@@ -44,12 +44,10 @@
             p.img AS img
         FROM
             article a
-            INNER JOIN USER u ON u.open_id = a.open_id
+            INNER JOIN user u ON u.open_id = a.open_id
             INNER JOIN pace p ON u.open_id = p.open_id
         WHERE
             a.article_id = #{arg0}
-        LIMIT
-            1
     </select>
 
     <select id="selectArticleByKeyword" parameterType="java.lang.String"
@@ -70,7 +68,7 @@
             p.img AS img
         FROM
             article a
-            INNER JOIN USER u ON u.open_id = a.open_id
+            INNER JOIN user u ON u.open_id = a.open_id
             INNER JOIN pace p ON u.open_id = p.open_id
         WHERE
             a.title LIKE CONCAT(CONCAT('%',#{arg0},'%'))
@@ -95,7 +93,7 @@
             p.img AS img
         FROM
             article a
-            INNER JOIN USER u ON u.open_id = a.open_id
+            INNER JOIN user u ON u.open_id = a.open_id
             INNER JOIN pace p ON u.open_id = p.open_id
         WHERE
             a.open_id = #{arg0}
@@ -113,7 +111,7 @@
 
     <delete id="deleteArticle" >
         delete from article
-        where article = #{arg0}
+        where article_id = #{arg0}
     </delete>
 
 

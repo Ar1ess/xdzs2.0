@@ -2,6 +2,7 @@ package com.softlab.common.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -11,7 +12,7 @@ import java.sql.Timestamp;
  */
 
 @Data
-public class Comment {
+public class Comment implements Serializable {
 
     /**
      * 评论主键ID
