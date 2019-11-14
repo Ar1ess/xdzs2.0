@@ -3,6 +3,8 @@ package com.softlab.common.model.vo;
 import com.softlab.common.model.Comment;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author : Ar1es
  * @date : 2019/11/8
@@ -10,7 +12,7 @@ import lombok.Data;
  */
 
 @Data
-public class CommentVo extends Comment {
+public class CommentVo extends Comment implements Serializable {
 
     /**
      * 用户头像

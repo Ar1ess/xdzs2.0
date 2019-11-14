@@ -2,13 +2,15 @@ package com.softlab.common.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author : Ar1es
  * @date : 2019/11/11
  * @since : Java 8
  */
 @Data
-public class Course {
+public class Course implements Serializable {
 
     /**
      * 课程id
