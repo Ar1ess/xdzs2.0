@@ -23,5 +23,5 @@ public class Version implements Serializable {
     /**
      * 版本说明
      */
-    private String text;
+    private String data;
 }

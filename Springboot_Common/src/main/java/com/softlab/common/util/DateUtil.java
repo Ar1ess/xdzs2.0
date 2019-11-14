@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * @author : Ar1es
  * @date : 2019/11/7
- * @since : Java 8
+ * @since : Java 7
  */
 public class DateUtil {
 

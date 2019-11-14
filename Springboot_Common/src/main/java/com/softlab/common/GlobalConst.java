@@ -14,7 +14,6 @@ public class GlobalConst {
 
     public static final String url0 = "&grant_type=authorization_code";
 
-
     /**
      * 文章标题等简介
      */
@@ -24,6 +23,21 @@ public class GlobalConst {
      * 文章总数
      */
     public static final String ARTICLE_COUNT = "redis:article:count";
+
+    /**
+     * 课程排行榜
+     */
+    public static final String COURSE_RATE = "redis:course:rate";
+
+    /**
+     * 限制投票时间
+     */
+    public static final String RATE_TIME = "redis:rate:time";
+
+    /**
+     * 版本信息
+     */
+    public static final String VERSION = "redis:version";
 
 
     /**
