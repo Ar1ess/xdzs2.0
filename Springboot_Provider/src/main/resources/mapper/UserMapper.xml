@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softlab.provider.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.softlab.common.model.User">
+        <id column="system_id" jdbcType="INTEGER" property="systemId"/>
+        <id column="open_id" jdbcType="VARCHAR" property="openId"/>
+        <id column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <id column="user_icon" jdbcType="VARCHAR" property="userIcon"/>
+        <id column="user_pace" jdbcType="INTEGER" property="userPace"/>
+    </resultMap>
+
+    <insert id="addUser" parameterType="com.softlab.common.model.User">
+        insert into user (open_id, user_name, user_icon, user_pace)
+        values (#{openId}, #{userName}, #{userIcon}, #{userPace})
+    </insert>
+    <update id="updateUser">
+        update user
+        set
+        <if test="null != openId and '' != openId">
+            open_id = #{openId},
+        </if>
+        <if test="null != userName and '' != userName">
+            user_name = #{userName},
+        </if>
+        <if test="null != userIcon and '' != userIcon">
+            user_icon = #{userIcon},
+        </if>
+        <if test="null != userPace and '' != userPace">
+            user_pace = #{userPace},
+        </if>
+        open_id = #{openId}
+        where open_id = #{openId}
+    </update>
+
+    <select id="selectUserOrderByPace" resultMap="BaseResultMap">
+        select open_id openId,user_pace userPace
+        from user order by pace desc;
+    </select>
+
+    <select id="getUserSize" resultType="java.lang.Integer">
+        select count(user_pace) from user;
+    </select>
+
+    <select id="selectUser" resultType="com.softlab.common.model.User">
+        select open_id openId,user_pace userPace from user
+        <where>
+            <if test="null != openId and '' != openId">
+              and open_id = #{openId}
+            </if>
+            <if test="null != userName and '' != userName">
+              and user_name = #{userName}
+            </if>
+            <if test="null != userIcon and '' != userIcon">
+              and user_icon = #{userIcon}
+            </if>
+            <if test="null != userPace and '' != userPace">
+              and user_pace = #{userPace}
+            </if>
+        </where>
+    </select>
+    <select id="selectUserRank" resultType="java.lang.Integer">
+        select count(user_pace) from user where user_pace >= #{userPace}
+    </select>
+
+
+</mapper>

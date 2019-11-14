@@ -49,15 +49,100 @@ public class HttpRequestor {
                 if (reader != null) {
                     reader.close();
                 }
+
                 if (inputStreamReader != null) {
                     inputStreamReader.close();
                 }
+
                 if (inputStream != null) {
                     inputStream.close();
                 }
+
             }
+
             return resultBuffer.toString();
         }
+    }
+
+    public String doPost(String url, Map parameterMap) throws Exception {
+        StringBuffer parameterBuffer = new StringBuffer();
+        if (parameterMap != null) {
+            Iterator iterator = parameterMap.keySet().iterator();
+            String key = null;
+            String value = null;
+
+            while (iterator.hasNext()) {
+                key = (String) iterator.next();
+                if (parameterMap.get(key) != null) {
+                    value = (String) parameterMap.get(key);
+                } else {
+                    value = "";
+                }
+
+                parameterBuffer.append(key).append("=").append(value);
+                if (iterator.hasNext()) {
+                    parameterBuffer.append("&");
+                }
+            }
+        }
+
+        System.out.println("POST parameter : " + parameterBuffer.toString());
+        URL localURL = new URL(url);
+        URLConnection connection = this.openConnection(localURL);
+        HttpsURLConnection httpsURLConnection = (HttpsURLConnection) connection;
+        httpsURLConnection.setDoOutput(true);
+        httpsURLConnection.setRequestMethod("POST");
+        httpsURLConnection.setRequestProperty("Accept-Charset", this.charset);
+        httpsURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        httpsURLConnection.setRequestProperty("Content-Length", String.valueOf(parameterBuffer.length()));
+        OutputStream outputStream = null;
+        OutputStreamWriter outputStreamWriter = null;
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader reader = null;
+        StringBuffer resultBuffer = new StringBuffer();
+        String tempLine = null;
+
+        try {
+            outputStream = httpsURLConnection.getOutputStream();
+            outputStreamWriter = new OutputStreamWriter(outputStream);
+            outputStreamWriter.write(parameterBuffer.toString());
+            outputStreamWriter.flush();
+            if (httpsURLConnection.getResponseCode() >= 300) {
+                throw new Exception("HTTP Request is not success, Response code is " + httpsURLConnection.getResponseCode());
+            }
+
+            inputStream = httpsURLConnection.getInputStream();
+            inputStreamReader = new InputStreamReader(inputStream);
+            reader = new BufferedReader(inputStreamReader);
+
+            while ((tempLine = reader.readLine()) != null) {
+                resultBuffer.append(tempLine);
+            }
+        } finally {
+            if (outputStreamWriter != null) {
+                outputStreamWriter.close();
+            }
+
+            if (outputStream != null) {
+                outputStream.close();
+            }
+
+            if (reader != null) {
+                reader.close();
+            }
+
+            if (inputStreamReader != null) {
+                inputStreamReader.close();
+            }
+
+            if (inputStream != null) {
+                inputStream.close();
+            }
+
+        }
+
+        return resultBuffer.toString();
     }
 
     private URLConnection openConnection(URL localURL) throws IOException {
@@ -72,6 +157,16 @@ public class HttpRequestor {
         return connection;
     }
 
+    private void renderRequest(URLConnection connection) {
+        if (this.connectTimeout != null) {
+            connection.setConnectTimeout(this.connectTimeout.intValue());
+        }
+
+        if (this.socketTimeout != null) {
+            connection.setReadTimeout(this.socketTimeout.intValue());
+        }
+
+    }
 
     public Integer getConnectTimeout() {
         return this.connectTimeout;
@@ -112,7 +207,6 @@ public class HttpRequestor {
     public void setCharset(String charset) {
         this.charset = charset;
     }
-
 }
 
 

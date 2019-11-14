@@ -23,7 +23,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.7</java.version>
+        <java.version>1.8</java.version>
         <dubbo.version>2.5.5</dubbo.version>
         <zkclient.version>0.10</zkclient.version>
         <lombok.version>1.16.18</lombok.version>

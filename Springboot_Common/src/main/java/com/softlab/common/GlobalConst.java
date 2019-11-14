@@ -40,5 +40,21 @@ public class GlobalConst {
     public static final String VERSION = "redis:version";
 
 
+    /**
+     * 步数排行榜
+     */
+    public static final String PACE_RANK = "pace_rank";
+
+
+    public static final String PACE_LIST = "paceList";
+
+    public static final String USER_SIZE = "userSize";
+
+    public static final String PACE_PREFIX = "bean:";
+
+    public static final String PACE_SORT = "pace_sort";
+
+
+
 
 }

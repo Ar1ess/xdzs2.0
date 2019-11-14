@@ -1,6 +1,8 @@
 package com.softlab.provider.mapper;
 
+import com.softlab.common.model.vo.PaceVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -9,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
+import static com.softlab.common.GlobalConst.*;
 /**
  * @author : Ar1es
  * @date : 2019/11/8
@@ -30,7 +32,7 @@ public class RedisMapper {
      *            键
      * @param time
      *            时间(秒)
-     * @return true成功 false失败
+     * @return
      */
     public boolean expire(String key, long time) {
         try {
@@ -480,6 +482,15 @@ public class RedisMapper {
         }
     }
 
+    public List<PaceVo> lGetPaceVo(String key, long start, long end) {
+        try {
+            return redisTemplate.opsForList().range(key, start, end);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * 获取list缓存的长度
      *
@@ -526,6 +537,16 @@ public class RedisMapper {
     public boolean lSet(String key, Object value) {
         try {
             redisTemplate.opsForList().leftPush(key, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean lSetPaceVo(String key, PaceVo value) {
+        try {
+            redisTemplate.opsForList().rightPush(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -641,6 +662,66 @@ public class RedisMapper {
             return 0;
         }
     }
+
+    /**
+     * 添加或者更新一个元素，zset与set最大的区别是每个元素都有一个pace，因此有一个排序的功能；zadd
+     * @param key
+     * @param value
+     * @param pace
+     */
+    public boolean zAdd(String key, String value, int pace) {
+        return redisTemplate.opsForZSet().add(key, value, pace);
+    }
+
+    /**
+     * 获取单个排行
+     * 判断value在zset中的排名，zrank
+     * 步数多的在前面
+     * @param key
+     * @param value
+     * @return
+     */
+    public Long zRank(String key, String value) {
+        return redisTemplate.opsForZSet().reverseRank(key,value);
+    }
+
+    /**
+     * 带有pace的返回方法
+     * @param key
+     * @param value
+     * @return
+     */
+    public Set<ZSetOperations.TypedTuple<String>> zRange(String key, String value) {
+        return redisTemplate.opsForZSet().reverseRangeWithScores(PACE_SORT, 0, zCard());
+    }
+
+    public Set zRange1() {
+        return redisTemplate.opsForZSet().reverseRange(PACE_SORT, 0, 10);
+    }
+
+    /**
+     * 计算集合数量
+     * @return
+     */
+    public Long zCard() {
+        return redisTemplate.opsForZSet().zCard(PACE_SORT);
+    }
+
+    /**
+     * 获取value的分数值
+     * @param value
+     * @return
+     */
+    public Double zScore(String value) {
+        if (redisTemplate.hasKey(PACE_SORT)) {
+            return redisTemplate.opsForZSet().score(PACE_SORT, value);
+        } else {
+            return null;
+        }
+
+    }
+
+
 
 
     /**

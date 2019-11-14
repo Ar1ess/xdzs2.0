@@ -2,10 +2,12 @@ package com.softlab.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.io.Serializable;
+
 /**
  * Created by LiXiwen on 2019/7/3 17:56.
  **/
-public class RestData {
+public class RestData implements Serializable {
     private int code;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -13,6 +15,9 @@ public class RestData {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Object data;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Object mydata;
 
     public RestData(int code, String message, Object data) {
         this.code = code;
@@ -27,6 +32,12 @@ public class RestData {
 
     public RestData(Object data) {
         this.code = 0;
+        this.data = data;
+    }
+
+    public RestData(Object mydata, Object data) {
+        this.code = 0;
+        this.mydata = mydata;
         this.data = data;
     }
 
@@ -52,5 +63,13 @@ public class RestData {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public Object getMydata() {
+        return mydata;
+    }
+
+    public void setMydata(Object mydata) {
+        this.mydata = mydata;
     }
 }

@@ -1,4 +1,4 @@
-package com.softlab.provider;
+package com.softlab.provider.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

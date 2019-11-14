@@ -2,10 +2,18 @@ server:
   port: 8089
   servlet:
     context-path: /
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.softlab.common.model
+
 spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123
   datasource:
     name: xdzs
-    url: jdbc:mysql://139.196.75.14:3306/xdzs
+    url: jdbc:mysql://139.196.75.14:3306/xdzs?useSSL=false&useUnicode=true&characterEncoding=utf-8
     username: root
     password: root
     # 使用druid数据源
@@ -24,17 +32,51 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
-  redis:
-    database: 0
-    host: 39.97.112.80
-    port: 6379
-    password:
-    jedis:
-      pool:
-        max-idle: 9
-        max-wait: -1
-        min-idle: 0
-    timeout: 1000
-mybatis:
-  type-aliases-package: com.softlab.common.model
-  mapper-locations: classpath:mapper/*Mapper.xml
+  rabbitmq:
+    # rabbitmq
+    # rabbitmq服务器地址
+    # 镜像集群模式填写TCP代理的地址和监听的端口
+    # 非集群模式下，填写MQ服务器的地址和端口
+    # 这个是集群模式，100是代理地址 192.168.1.100
+    host: 127.0.0.1
+    # rabbitmq的用户名和密码
+    username: LiXiwen
+    password: 178415
+    # rabbitmq服务器的虚拟主机名，可以在后台管理系统上查看和新建
+    virtual-host: /
+    # 连接超时
+    connection-timeout: 15000
+    # rabbitmq-producer
+    # 允许ConfirmCallback
+    publisher-confirms: true
+    # 允许ReturnCallback
+    publisher-returns: true
+    template:
+      mandatory: true
+    # rabbitmq-consumer
+    # 并发数
+    listener:
+      simple:
+        # 并发数
+        concurrency: 5
+        # 最大并发数
+        max-concurrency: 20
+        # 签收模式，手动
+        acknowledge-mode: manual
+        # 限流, 避免同时处理大量消息导致服务器 down 机, 根据线程数来决定
+        prefetch: 1
+
+mq:
+  env: 192.168.1.100
+
+#一个消费者
+queue:
+  user:
+    exchange:
+      name: ${mq.env}.decrypt.exchange
+    routing:
+      key:
+        name: ${mq.env}.decrypt.routing.key
+    queue:
+      name: ${mq.env}.decrypt.queue
+
