@@ -6,7 +6,6 @@ import lombok.Data;
 /**
  * Created by LiXiwen on 2019/3/25.
  **/
-@Data
 public class DecryptVo extends User {
 
     /**
@@ -24,4 +23,35 @@ public class DecryptVo extends User {
 
     private Integer days;
 
+    public String getEncryptedData() {
+        return encryptedData;
+    }
+
+    public void setEncryptedData(String encryptedData) {
+        this.encryptedData = encryptedData;
+    }
+
+    public String getIv() {
+        return iv;
+    }
+
+    public void setIv(String iv) {
+        this.iv = iv;
+    }
+
+    public String getSessionKey() {
+        return sessionKey;
+    }
+
+    public void setSessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
+    }
+
+    public Integer getDays() {
+        return days;
+    }
+
+    public void setDays(Integer days) {
+        this.days = days;
+    }
 }

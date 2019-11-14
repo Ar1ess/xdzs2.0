@@ -2,12 +2,14 @@ package com.softlab.common.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author LiXiwen
  * @date 2019/11/8 11:21
  */
 @Data
-public class Version {
+public class Version implements Serializable {
     /**
      * 系统id
      */

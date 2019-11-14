@@ -27,7 +27,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public RestData myHosException(HttpServletRequest request, final Exception ex,
                                    HttpServletResponse response) {
         //response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        System.out.println("AppException");
         logger.info("AppException");
         AppException e = (AppException) ex;
         //ex.printStackTrace();
@@ -45,11 +44,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public RestData runtimeHosException(HttpServletRequest request, final Exception ex,
                                         HttpServletResponse response) {
         //response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        System.out.println("AppException");
-        logger.info("runtimeHosException");
+        logger.info("runtimeException");
         RuntimeException e = (RuntimeException) ex;
-        //ex.printStackTrace();
-        return new RestData(1, ex.getLocalizedMessage());
+        ex.printStackTrace();
+        return new RestData(1, e.getMessage());
     }
 
 }

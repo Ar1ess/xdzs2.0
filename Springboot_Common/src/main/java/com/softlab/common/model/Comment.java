@@ -2,6 +2,8 @@ package com.softlab.common.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author : Ar1es
  * @date : 2019/11/7
@@ -9,7 +11,7 @@ import lombok.Data;
  */
 
 @Data
-public class Comment {
+public class Comment implements Serializable {
 
 
 }

@@ -3,6 +3,7 @@ package com.softlab.common.service;
 import com.softlab.common.RestData;
 import com.softlab.common.exception.AppException;
 import com.softlab.common.model.Pace;
+import com.softlab.common.model.User;
 import com.softlab.common.model.vo.DecryptVo;
 
 /**
@@ -17,13 +18,13 @@ public interface UserService {
      * @return
      * @throws AppException
      */
-    String login(String code) throws AppException;
+    String login(String code);
 
     /**
-     * 解密数据
-     * @param decryptVo
+     * 添加用户
+     * @param user
      * @return
-     * @throws AppException
      */
-    RestData decrypt(DecryptVo decryptVo) throws AppException;
+    RestData addUser(User user);
+
 }

@@ -2,6 +2,7 @@ package com.softlab.common.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -9,7 +10,7 @@ import java.sql.Timestamp;
  * @date 2019/11/8 10:51
  */
 @Data
-public class FeedBack {
+public class FeedBack implements Serializable {
     /**
      * 系统ID
      */
