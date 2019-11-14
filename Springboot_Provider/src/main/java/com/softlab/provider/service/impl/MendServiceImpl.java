@@ -21,7 +21,7 @@ import java.util.Map;
  */
 
 @Service
-@org.springframework.stereotype.Service
+//@org.springframework.stereotype.Service
 public class MendServiceImpl implements MendService {
 
     @Autowired

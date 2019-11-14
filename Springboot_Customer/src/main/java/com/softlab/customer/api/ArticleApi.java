@@ -27,7 +27,7 @@ public class ArticleApi {
     private static final Logger logger = LoggerFactory.getLogger(ArticleApi.class);
 
     @Reference
-    @Resource
+   // @Resource
     private ArticleService articleService;
 
 

@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Service
-@org.springframework.stereotype.Service
+//@org.springframework.stereotype.Service
 public class VersionServiceImpl implements VersionService {
 
 
@@ -57,9 +57,11 @@ public class VersionServiceImpl implements VersionService {
         int flag = versionMapper.updateVersion(version);
 
         if (0 < flag) {
-            logger.info("版本信息修改成功, 将删除缓存");
-            redisMapper.del(GlobalConst.VERSION);
-            logger.info("删除缓存成功");
+            if (redisMapper.hasKey(GlobalConst.VERSION)) {
+                logger.info("版本信息修改成功, 将删除缓存");
+                redisMapper.del(GlobalConst.VERSION);
+                logger.info("删除缓存成功");
+            }
         } else {
             throw new AppException(ErrorMessage.SYSTEM_ERROR);
         }

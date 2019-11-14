@@ -17,7 +17,7 @@ import java.util.*;
  * @since : Java 8
  */
 @Service
-@org.springframework.stereotype.Service
+//@org.springframework.stereotype.Service
 public class CourseServiceImpl implements CourseService {
 
     @Autowired

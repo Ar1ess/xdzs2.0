@@ -20,7 +20,7 @@ import java.util.Map;
  * @since : Java 8
  */
 @Service
-@org.springframework.stereotype.Service
+//@org.springframework.stereotype.Service
 public class FeedBackServiceImpl implements FeedBackService {
 
     @Autowired

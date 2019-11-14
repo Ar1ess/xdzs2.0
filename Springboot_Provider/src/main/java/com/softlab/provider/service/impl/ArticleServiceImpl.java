@@ -34,7 +34,7 @@ import java.util.*;
  */
 
 @Service
-@org.springframework.stereotype.Service
+//@org.springframework.stereotype.Service
 public class ArticleServiceImpl implements ArticleService {
 
     private static final Logger logger = LoggerFactory.getLogger(ArticleServiceImpl.class);
@@ -94,6 +94,7 @@ public class ArticleServiceImpl implements ArticleService {
     public Map<String, Object> getArticleDetail(Integer id) {
         List<ArticleVo> list = articleMapper.selectArticleDetail(id);
         Map<String, Object> map = new HashMap<>(8);
+        System.out.println(list.size());
         if (null != list && 1 == list.size()) {
             ArticleVo art = list.get(0);
             map.put("systemId", art.getArticleId());
