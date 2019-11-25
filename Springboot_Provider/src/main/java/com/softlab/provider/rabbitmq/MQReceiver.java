@@ -40,7 +40,7 @@ public class MQReceiver implements ChannelAwareMessageListener {
             byte[] body = message.getBody();
             DecryptVo decryptVo = objectMapper.readValue(body, DecryptVo.class);
             logger.info("tag : " + tag);
-            logger.info("异步接收decryptVo ： " + JsonUtil.getJsonString(decryptVo));
+            logger.info("异步接收decryptVo ： ");
             User user = new User();
             BeanUtils.copyProperties(decryptVo, user);
 

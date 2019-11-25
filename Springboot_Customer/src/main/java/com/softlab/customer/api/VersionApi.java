@@ -24,7 +24,6 @@ public class VersionApi {
     private static final Logger logger = LoggerFactory.getLogger(VersionApi.class);
 
     @Reference
-    @Resource
     private VersionService versionService;
 
 

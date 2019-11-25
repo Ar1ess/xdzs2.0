@@ -86,16 +86,17 @@ public class PaceServiceImpl implements PaceService {
 
     @Override
     public RestData selectPace(String openId) {
+        logger.info("openId : " + openId);
         Object obj = redisService.getPaceVoBean(openId);
         List<PaceVo> other;
         other = redisService.getList();
         if (null == other) {
             logger.warn("用户进来立马就点步数，系统异步任务还未完成，查数据库");
-            other = paceMapper.selectPaceDescRank();
+            Pace p = new Pace();
+            p.setOpenId(openId);
+            other = paceMapper.selectPartPaceByRank(p);
             redisService.setList(other);
         }
-        logger.info("other : " + JsonUtil.getJsonString(other));
-
         if (null != obj) {
             logger.info("redis --> my : " + JsonUtil.getJsonString(obj));
             return new RestData(obj, other);

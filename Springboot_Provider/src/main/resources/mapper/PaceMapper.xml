@@ -42,8 +42,35 @@
         open_id = #{openId}
         where open_id = #{openId}
     </update>
+    <update id="updatePartPace" parameterType="java.util.List">
+        <foreach collection="list" item = "pace" index="index" separator=";">
+            update pace
+            <set>
+                <if test="null != pace.openId and '' != pace.openId">
+                    open_id = #{pace.openId},
+                </if>
+                <if test="null != pace.paiwei and '' != pace.paiwei">
+                    paiwei = #{pace.paiwei},
+                </if>
+                <if test="null != pace.pace and '' != pace.pace">
+                    pace = #{pace.pace},
+                </if>
+                <if test="null != pace.img and '' != pace.img">
+                    img = #{pace.img},
+                </if>
+                <if test="null != pace.color and '' != pace.color">
+                    color = #{pace.color},
+                </if>
+                <if test="null != pace.rank and '' != pace.rank">
+                    rank = #{pace.rank},
+                </if>
+                open_id = #{pace.openId}
+            </set>
+            where open_id = #{pace.openId}
+        </foreach>
+    </update>
 
-    <select id="selectPaceDescRank" resultType="com.softlab.common.model.vo.PaceVo">
+    <select id="selectPaceByRank" resultType="com.softlab.common.model.vo.PaceVo">
         select p.open_id as openId, paiwei, pace, img, color, rank, u.user_name as name
         from pace p, user u where p.open_id = u.open_id order by p.rank;
     </select>
@@ -51,18 +78,15 @@
 
     <select id="selectPaceVo" resultType="com.softlab.common.model.vo.PaceVo">
         select p.open_id as openId, paiwei, pace, img, color, rank, u.user_name as name, u.user_icon as icon
-        from pace p, user u where p.open_id = #{openId} order by p.rank;
+        from pace p, user u where p.open_id = #{openId} and u.open_id = #{openId};
     </select>
 
-    <select id="selectPaceVo1" resultType="com.softlab.common.model.vo.PaceVo">
-        select p.open_id as openId, paiwei, pace, img, color, rank, u.user_name as name
-        from pace p, user u where p.open_id = #{openId} order by p.rank;
-    </select>
 
     <select id="selectPace1" resultType="com.softlab.common.model.Pace">
         select p.open_id as openId, paiwei, pace, img, color, rank
         from pace p;
     </select>
+
     <select id="selectRunData" resultType="com.softlab.common.model.vo.RunVo">
         select open_id openId, run_data runData, run_time runTime, u.user_name as userName
         from run, user u
@@ -70,6 +94,14 @@
     <select id="init1" resultType="com.softlab.common.model.vo.PaceVo">
         select open_id openId, pace
         from pace;
+    </select>
+    <select id="selectPartPaceByRank" resultType="com.softlab.common.model.vo.PaceVo">
+        select p.open_id as openId, paiwei, pace, img, color, rank, u.user_name as name
+        from pace p,user u
+        where p.open_id = u.open_id
+          and p.open_id != #{openId}
+          and u.open_id != #{openId}
+        order by rank;
     </select>
 
 
