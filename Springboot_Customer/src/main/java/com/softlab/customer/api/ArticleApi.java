@@ -38,7 +38,7 @@ public class ArticleApi {
      */
     @RequestMapping(value = "/community", method = RequestMethod.GET)
     public RestData getAllArticle() {
-        logger.info("getAllArticle : ");
+        logger.info("GET getAllArticle : ");
 
         List<Object> list = articleService.getAllArticle();
         return new RestData(list);
@@ -52,7 +52,7 @@ public class ArticleApi {
      */
     @RequestMapping(value = "/detail/{systemId}", method = RequestMethod.GET)
     public RestData getArticleDetail(@PathVariable(value = "systemId") Integer systemId) {
-        logger.info("getArticleDetail ： id = " + systemId);
+        logger.info("GET getArticleDetail ： id = " + systemId);
 
         Map<String, Object> map = articleService.getArticleDetail(systemId);
         List<Map<String, Object>> al = articleService.getCommentByArtcileId(systemId);
@@ -69,7 +69,7 @@ public class ArticleApi {
      */
     @RequestMapping(value = "/community/search", method = RequestMethod.GET)
     public RestData getCommunityByKeyword(@RequestParam(value = "keyword") String keyword) {
-        logger.info("getCommunityByKeyword ： keyword = " + keyword);
+        logger.info("GET getCommunityByKeyword ： keyword = " + keyword);
 
         List<Map<String, Object>> al = articleService.getArticleByKeyword(keyword);
 
@@ -115,7 +115,7 @@ public class ArticleApi {
      */
     @RequestMapping(value = "/detail/comment", method = RequestMethod.POST)
     public RestData insertComment(@RequestBody Comment comment) {
-        logger.info(" insertComment: " + comment.getCContent());
+        logger.info("POST insertComment: " + comment.getCContent());
 
         int flag = articleService.insertComment(comment);
 
@@ -130,7 +130,7 @@ public class ArticleApi {
      */
     @RequestMapping(value = "/my/{oppid}", method = RequestMethod.GET)
     public RestData selectMyCommunity(@PathVariable(value = "oppid") String oppid) {
-        logger.info("selectMyCommunity : openId = " + oppid);
+        logger.info("GET selectMyCommunity : openId = " + oppid);
 
         List<Map<String, Object>> data = articleService.getArticleByOpenId(oppid);
 
@@ -145,7 +145,7 @@ public class ArticleApi {
      */
     @RequestMapping(value = "/my/delete/{systemId}", method = RequestMethod.POST)
     public RestData deleteMyCommunity(@PathVariable(value = "systemId") Integer systemId) {
-        logger.info("deleteMyCommunity : systemId = " + systemId);
+        logger.info("POST deleteMyCommunity : systemId = " + systemId);
 
         int flag = articleService.deleteArticle(systemId);
 
@@ -159,7 +159,7 @@ public class ArticleApi {
      */
     @RequestMapping(value = "/getPassCommunity", method = RequestMethod.GET)
     public RestData getNotPassArticle() {
-        logger.info("getNotPassArticle : ");
+        logger.info("GET getNotPassArticle : ");
 
         List<Map<String, Object>> data = articleService.getAllNotPassArticle();
 
@@ -174,7 +174,7 @@ public class ArticleApi {
      */
     @RequestMapping(value = "/passCommunity", method = RequestMethod.GET)
     public RestData passArticle(@RequestParam(value = "id") Integer systemId) {
-        logger.info("passArticle : systemId = " + systemId);
+        logger.info("GET passArticle : systemId = " + systemId);
 
         int flag = articleService.updateArticlePass(systemId);
 
@@ -189,7 +189,7 @@ public class ArticleApi {
      */
     @RequestMapping(value = "/passComment", method = RequestMethod.GET)
     public RestData passComment(@RequestParam(value = "id") Integer systemId) {
-        logger.info("passComment : systemId = " + systemId);
+        logger.info("GET passComment : systemId = " + systemId);
 
         int flag = articleService.updateCommentPass(systemId);
 
@@ -204,7 +204,7 @@ public class ArticleApi {
      */
     @RequestMapping(value = "/delete/comment", method = RequestMethod.GET)
     public RestData deleteComment(@RequestParam(value = "id") Integer systemId) {
-        logger.info("deleteComment : systemId = " + systemId);
+        logger.info("GET deleteComment : systemId = " + systemId);
 
         int flag = articleService.deleteComment(systemId);
 

@@ -6,6 +6,7 @@ package com.softlab.common;
  */
 public class ErrorMessage {
 
+    public static String JIE_MI = "解密失败!";
     public static String NONE_DATA = "无数据";
     public static String SYSTEM_ERROR = "系统异常!";
     public static String UPLOAD_ERROR = "上传文件失败!";

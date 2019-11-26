@@ -32,7 +32,7 @@ public class MendApi {
      */
     @RequestMapping(value = "/selectAllArea", method = RequestMethod.GET)
     public RestData selectAllMend() {
-        logger.info("保修信息查询 : ");
+        logger.info("GET 保修信息查询 : ");
 
         List<Map<String, Object>> data = mendService.selectAllMend();
 
@@ -48,7 +48,7 @@ public class MendApi {
      */
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
     public RestData addMend(@RequestBody Mend mend) {
-        logger.info("报修开始新增 : " + mend.getLocation() + " " + mend.getContext());
+        logger.info("POST 报修开始新增 : " + mend.getLocation() + " " + mend.getContext());
 
         if ((0 >= mend.getNumber().length() || 10 < mend.getNumber().length()) || 0 >= mend.getName().length() || 11 != mend.getPhone().length()) {
             return new RestData(1, "输入数据格式不符合要求");
@@ -67,7 +67,7 @@ public class MendApi {
      */
     @RequestMapping(value = "/deleteArea", method = RequestMethod.GET)
     public RestData deleteMend(@RequestParam("id") Integer id) {
-        logger.info("报修删除 : id = " + id);
+        logger.info("GET 报修删除 : id = " + id);
         int flag = mendService.deleteMendById(id);
 
         return new RestData(flag);

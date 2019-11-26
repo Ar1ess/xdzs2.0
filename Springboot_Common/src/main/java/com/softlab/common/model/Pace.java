@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 
 @Data
-public class Pace  implements Serializable {
+public class Pace implements Serializable {
     /**
      * 系统ID
      */
@@ -40,5 +40,10 @@ public class Pace  implements Serializable {
      * 该段位对应颜色
      */
     private String color;
+
+    /**
+     * 用户步数排名
+     */
+    private Integer rank;
 
 }
