@@ -27,10 +27,10 @@ import java.util.Map;
 public class UserApi {
     private final Logger logger = LoggerFactory.getLogger(UserApi.class);
 
-    @Reference
+    @Reference(timeout = 1200000)
     private UserService userService;
 
-    @Reference
+    @Reference(timeout = 1200000)
     private PaceService paceService;
 
     /**

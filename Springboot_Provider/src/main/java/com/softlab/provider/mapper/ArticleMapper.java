@@ -72,4 +72,12 @@ public interface ArticleMapper {
      */
     @Select("select count(*) from article where open_id = #{arg0}")
     Integer selectArticleCountByOpenId(String openId);
+
+
+    /**
+     * 查询所有文章总数
+     * @return Integer
+     */
+    @Select("select count(*) from article where is_pass = 1")
+    Integer selectArticleCount();
 }

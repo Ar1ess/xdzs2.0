@@ -33,7 +33,6 @@
         where article_id = #{arg0}
     </update>
 
-
     <update id="updatePassComment" parameterType="java.lang.Integer">
         update comment
         set c_is_pass = 1

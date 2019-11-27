@@ -8,6 +8,7 @@ import com.softlab.provider.mapper.PaceMapper;
 import com.softlab.provider.mapper.RedisMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,13 +36,19 @@ public class PaceFzServiceImpl implements PaceFzService {
     }
 
     @Override
+    @Transactional
+    public boolean updatePartPace(List<PaceVo> list) {
+        return paceMapper.updatePartPace(list);
+    }
+
+    @Override
     public List<PaceVo> selectPaceVo(Pace pace) {
         return paceMapper.selectPaceVo(pace);
     }
 
     @Override
-    public List<PaceVo> selectPaceDescRank() {
-        return paceMapper.selectPaceDescRank();
+    public List<PaceVo> selectPaceByRank() {
+        return paceMapper.selectPaceByRank();
     }
 
     @Override
@@ -49,7 +56,12 @@ public class PaceFzServiceImpl implements PaceFzService {
         List<PaceVo> paceVos = paceMapper.init1();
         paceVos.parallelStream().forEach(paceVo
                 -> redisMapper.zAdd(GlobalConst.PACE_SORT, paceVo.getOpenId(), paceVo.getPace()));
-        System.out.println("zcard : " + redisMapper.zCard());
+    }
+
+    @Override
+    public List<PaceVo> selectPartPaceByRank(Pace pace) {
+
+        return paceMapper.selectPartPaceByRank(pace);
     }
 
 

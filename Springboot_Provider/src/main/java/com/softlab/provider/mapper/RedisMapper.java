@@ -2,7 +2,6 @@ package com.softlab.provider.mapper;
 
 import com.softlab.common.model.vo.PaceVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -687,16 +686,10 @@ public class RedisMapper {
 
     /**
      * 带有pace的返回方法
-     * @param key
-     * @param value
      * @return
      */
-    public Set<ZSetOperations.TypedTuple<String>> zRange(String key, String value) {
+    public Set<PaceVo> zRange() {
         return redisTemplate.opsForZSet().reverseRangeWithScores(PACE_SORT, 0, zCard());
-    }
-
-    public Set zRange1() {
-        return redisTemplate.opsForZSet().reverseRange(PACE_SORT, 0, 10);
     }
 
     /**

@@ -25,7 +25,6 @@ public interface ArticleService {
 
 
     /**
-     * TODO 未加入评论
      * 文章详细内容
      * @param id
      * @return Map<String, Object>
@@ -56,6 +55,13 @@ public interface ArticleService {
      */
 
     List<Map<String, Object>> getCommentByArtcileId(Integer id);
+
+
+    /**
+     * 查询所有已审核文章总数
+     * @return
+     */
+    int getArticleCount();
 
     /**
      * 添加文章
@@ -88,7 +94,7 @@ public interface ArticleService {
      * @param openId
      * @return int
      */
-    int getArticleCount(String openId);
+    int getArticleCountByOpenId(String openId);
 
 
     /**

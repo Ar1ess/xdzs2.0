@@ -94,7 +94,6 @@ public class ArticleServiceImpl implements ArticleService {
     public Map<String, Object> getArticleDetail(Integer id) {
         List<ArticleVo> list = articleMapper.selectArticleDetail(id);
         Map<String, Object> map = new HashMap<>(8);
-        System.out.println(list.size());
         if (null != list && 1 == list.size()) {
             ArticleVo art = list.get(0);
             map.put("systemId", art.getArticleId());
@@ -203,6 +202,16 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public int getArticleCount() {
+        if (redisMapper.hasKey(GlobalConst.ARTICLE_COUNT)) {
+            return (int)(redisMapper.get(GlobalConst.ARTICLE_COUNT));
+        }
+        int count = articleMapper.selectArticleCount();
+        redisMapper.set(GlobalConst.ARTICLE_COUNT, count);
+        return count;
+    }
+
+    @Override
     public int insertArticle(Article article) {
         int flag = 0;
         if (null != article) {
@@ -258,13 +267,13 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public int getArticleCount(String openId) {
+    public int getArticleCountByOpenId(String openId) {
         //查询缓存是否命中
-        if (redisMapper.hasKey(GlobalConst.ARTICLE_COUNT + openId)) {
-            return (int)(redisMapper.get(GlobalConst.ARTICLE_COUNT + openId));
+        if (redisMapper.hasKey(GlobalConst.ARTICLE_COUNT + ":" +  openId)) {
+            return (int)(redisMapper.get(GlobalConst.ARTICLE_COUNT + ":" + openId));
         }
         int count = articleMapper.selectArticleCountByOpenId(openId);
-        redisMapper.set(GlobalConst.ARTICLE_COUNT + openId, count);
+        redisMapper.set(GlobalConst.ARTICLE_COUNT + ":"  + openId, count);
         return count;
     }
 
@@ -305,7 +314,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (0 < flag) {
             if(redisMapper.hasKey(GlobalConst.ARTICLE_INTR)){
                 logger.info("审核文章id = " + id + "成功, 将删除缓存");
-                redisMapper.del(GlobalConst.ARTICLE_INTR);
+                redisMapper.del(GlobalConst.ARTICLE_INTR, GlobalConst.ARTICLE_COUNT);
                 logger.info("缓存删除成功");
             }
         } else {
@@ -338,18 +347,18 @@ public class ArticleServiceImpl implements ArticleService {
         QiniuUtil qiniuUtil = new QiniuUtil();
         CommonUtil commonUtil = new CommonUtil();
         try {
-            File file_up = commonUtil.multipartToFile(file);
+            File fileUp = commonUtil.multipartToFile(file);
 
             String filenameExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
 
-            executeResult = qiniuUtil.uploadFile(file_up, filenameExtension);
+            executeResult = qiniuUtil.uploadFile(fileUp, filenameExtension);
 
             if (!executeResult.isSuccess()) {
                 return "失败" + executeResult.getErrorMessages();
             }
 
-        } catch (AuthException | JSONException e) {
-            logger.error("AuthException", e);
+        } catch (AuthException | JSONException | NullPointerException e) {
+            logger.error("Exception", e);
         }
         return executeResult.getResult();
     }

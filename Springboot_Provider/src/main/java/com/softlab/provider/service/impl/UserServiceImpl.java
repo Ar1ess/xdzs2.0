@@ -20,10 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static com.softlab.common.GlobalConst.*;
 
@@ -31,43 +31,39 @@ import static com.softlab.common.GlobalConst.*;
  * @author LiXiwen
  * @date 2019/11/7 20:14
  */
-@Service
+@Service(interfaceClass = UserService.class)
 public class UserServiceImpl implements UserService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     int n;
-    int m1 = (int) (n * 1 / 55);
-    int m2 = (int) (n * 2 / 55);
-    int m3 = (int) (n * 3 / 55);
-    int m4 = (int) (n * 4 / 55);
-    int m5 = (int) (n * 5 / 55);
-    int m6 = (int) (n * 6 / 55);
-    int m7 = (int) (n * 7 / 55);
-    int m8 = (int) (n * 8 / 55);
-    int m9 = (int) (n * 9 / 55);
+    int m1;
+    int m2;
+    int m3;
+    int m4;
+    int m5;
+    int m6;
+    int m7;
+    int m8;
+    int m9;
 
-    int n1 = m1 + 1;
-    int n2 = m2 + m1 + 1;
-    int n3 = m3 + m2 + m1 + 1;
-    int n4 = m4 + m3 + m2 + 1;
-    int n5 = m5 + m4 + m3 + m2 + m1 + 1;
-    int n6 = m6 + m5 + m4 + m3 + m2 + m1 + 1;
-    int n7 = m7 + m6 + m5 + m4 + m3 + m2 + m1 + 1;
-    int n8 = m8 + m7 + m6 + m5 + m4 + m3 + m2 + m1 + 1;
-    int n9 = m9 + m8 + m7 + m6 + m5 + m4 + m3 + m2 + m1 + 1;
+    int n1;
+    int n2;
+    int n3;
+    int n4;
+    int n5;
+    int n6;
+    int n7;
+    int n8;
+    int n9;
 
-    private final RedisMapper redisMapper;
     private final UserMapper userMapper;
     private final RedisService redisService;
-    private final PaceMapper paceMapper;
     private final PaceFzService paceFzService;
 
     @Autowired
-    public UserServiceImpl(RedisMapper redisMapper, UserMapper userMapper, RedisService redisService, PaceMapper paceMapper, PaceFzService paceFzService) {
-        this.redisMapper = redisMapper;
+    public UserServiceImpl(UserMapper userMapper, RedisService redisService,  PaceFzService paceFzService) {
         this.userMapper = userMapper;
         this.redisService = redisService;
-        this.paceMapper = paceMapper;
         this.paceFzService = paceFzService;
     }
 
@@ -93,6 +89,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
+    @Transactional
     public RestData addUser(User user) {
         // todo ：获取redis中用户数量
         n = (int) redisService.zCard();
@@ -100,58 +97,110 @@ public class UserServiceImpl implements UserService {
             n = userMapper.getUserSize();
         }
         logger.info("用户数量n : " + n);
+        setConst();
         // todo ：查看是否有该用户
 
         // todo ：没有
         if (redisService.zScore(user.getOpenId()) == null) {
-            logger.info("list == null ,list.size() == 0,user = "+JsonUtil.getJsonString(user));
-            if(userMapper.addUser(user) <= 0 &&
-                    !redisService.zAdd(user.getOpenId(), user.getUserPace())) {
+            logger.info("没有该用户 , user = "+JsonUtil.getJsonString(user));
+            if(userMapper.addUser(user) <=0 & redisService.zAdd(user.getOpenId(), user.getUserPace()) <= 0 ) {
+                logger.error("添加user ：error ");
                 throw new AppException(1, "添加User失败!");
             }
+            // 让用户数量+1
+            redisService.incrUserSize();
 
             int rank = (int) redisService.zRank(user.getOpenId());
+            logger.info("rank + 1 : " + (rank + 1));
             Pace pace = new Pace();
             BeanUtils.copyProperties(user, pace);
             pace.setPace(user.getUserPace());
-            pace.setRank(rank);
-            setPace(rank, pace);
+            pace.setRank(rank + 1);
+            setPace(rank + 1, pace);
+
             if (!paceFzService.addPace(pace)) {
+                logger.error("添加Pace失败!");
                 throw new AppException(1, "添加Pace失败!");
             }
             setRtv(pace);
-            List<PaceVo> paceVos = paceFzService.selectPaceDescRank();
-            redisService.setList(paceVos);
-            // 让用户数量+1
-            redisService.incrUserSize();
+
+            setOtherRtv(pace, rank);
+
+
         } else {
             // todo : 是否执行更新
             if (user.getUserPace() != redisService.zScore(user.getOpenId())) {
                 // todo ：更新，先更新数据库
                 if (0 >= userMapper.updateUser(user)) {
+                    logger.error("更新User失败!");
                     throw new AppException(1, "更新User失败!");
                 }
                 redisService.zAdd(user.getOpenId(), user.getUserPace());
                 int rank = (int) redisService.zRank(user.getOpenId());
                 Pace pace = new Pace();
                 BeanUtils.copyProperties(user, pace);
-                pace.setRank(rank);
+                pace.setRank(rank + 1);
                 // todo ：查看该排名所在段位并赋值
-                setPace(rank, pace);
+                setPace(rank + 1, pace);
+
                 if (!paceFzService.updatePace(pace)) {
+                    logger.error("更新Pace失败");
                     throw new AppException(1, "更新Pace失败");
                 }
                 setRtv(pace);
                 redisService.delList();
-                List<PaceVo> paceVoList = paceMapper.selectPaceDescRank();
-                redisService.setList(paceVoList);
+
+                setOtherRtv(pace, rank);
+
             }
         }
         return new RestData(0, "success");
     }
 
+    // https://blog.csdn.net/u014252478/article/details/99946834
+
+    private void setOtherRtv(Pace pace, int rank) {
+        List<PaceVo> paceVos = paceFzService.selectPartPaceByRank(pace);
+
+        // todo : 必须从0开始，加上parallel是并行处理
+        Stream.iterate(0, i -> i+1).limit(paceVos.size()).parallel().forEach(
+                i -> {
+                    if (i >= rank) {
+                        paceVos.get(i).setRank(paceVos.get(i).getRank() + 1);
+                        setPace(paceVos.get(i).getRank(), paceVos.get(i));
+                    }
+                });
+
+        redisService.setList(paceVos);
+        // todo ： update mysql
+        paceFzService.updatePartPace(paceVos);
+    }
+
+    private void setConst() {
+        m1 = (int) (n * 1 / 55);
+        m2 = (int) (n * 2 / 55);
+        m3 = (int) (n * 3 / 55);
+        m4 = (int) (n * 4 / 55);
+        m5 = (int) (n * 5 / 55);
+        m6 = (int) (n * 6 / 55);
+        m7 = (int) (n * 7 / 55);
+        m8 = (int) (n * 8 / 55);
+        m9 = (int) (n * 9 / 55);
+
+        n1 = m1 + 1;
+        n2 = m2 + m1 + 1;
+        n3 = m3 + m2 + m1 + 1;
+        n4 = m4 + m3 + m2 + 1;
+        n5 = m5 + m4 + m3 + m2 + m1 + 1;
+        n6 = m6 + m5 + m4 + m3 + m2 + m1 + 1;
+        n7 = m7 + m6 + m5 + m4 + m3 + m2 + m1 + 1;
+        n8 = m8 + m7 + m6 + m5 + m4 + m3 + m2 + m1 + 1;
+        n9 = m9 + m8 + m7 + m6 + m5 + m4 + m3 + m2 + m1 + 1;
+    }
+
     public void setRtv(Pace pace) {
         PaceVo paceVo = paceFzService.selectPaceVo(pace).get(0);
+
         Map<String,Object> map = new HashMap<>(8);
         map.put("Ipaiwei", paceVo.getPaiwei());
         map.put("Istyle", paceVo.getImg());
@@ -160,57 +209,59 @@ public class UserServiceImpl implements UserService {
         map.put("Iicon", paceVo.getIcon());
         map.put("Iname", paceVo.getName());
         map.put("Iimg", paceVo.getImg());
+
         redisService.setPaceVoBean(pace.getOpenId(), map);
     }
 
 
     public void setPace(int i, Pace pace) {
         if (i <= n1) {
+            System.out.println("n1");
             pace.setPaiwei("冠军王者");
             pace.setImg("wang");
             pace.setColor("#fff143");
-        }
-        if (i > n1 && i <= n2) {
+        } else if (i <= n2) {
+            System.out.println("n2");
             pace.setPaiwei("冲刺星耀");
             pace.setImg("xing");
             pace.setColor("#ffcc66");
-        }
-        if (i > n2 && i <= n3) {
+        } else if (i <= n3) {
+            System.out.println("n3");
             pace.setPaiwei("力行大师");
             pace.setImg("da");
             pace.setColor("#725E82");
-        }
-        if (i > n3 && i <= n4) {
+        } else if (i <= n4) {
+            System.out.println("n4");
             pace.setPaiwei("运动钻石");
             pace.setImg("zuan");
             pace.setColor("#ed5736");
-        }
-        if (i > n4 && i <= n5) {
+        } else if (i <= n5) {
+            System.out.println("n5");
             pace.setPaiwei("健步铂金");
             pace.setImg("bo");
             pace.setColor("#0094ff");
-        }
-        if (i > n5 && i <= n6) {
+        } else if (i <= n6) {
+            System.out.println("n6");
             pace.setPaiwei("速行黄金");
             pace.setImg("huang");
             pace.setColor("#eacd76");
-        }
-        if (i > n6 && i <= n7) {
+        } else if (i <= n7) {
+            System.out.println("n7");
             pace.setPaiwei("行走白银");
             pace.setImg("bai");
             pace.setColor("#e9e7ef");
-        }
-        if (i > n7 && i <= n8) {
+        } else if (i <= n8) {
+            System.out.println("n8");
             pace.setPaiwei("踱步青铜");
             pace.setImg("qing");
             pace.setColor("#a78e44");
-        }
-        if (i > n8 && i <= n9) {
+        } else if (i <= n9) {
+            System.out.println("n9");
             pace.setPaiwei("宅家咸鱼");
             pace.setImg("zhai");
             pace.setColor("#1bd1a5");
-        }
-        if (i > n9) {
+        } else {
+            System.out.println("n10");
             pace.setPaiwei("躺着不动");
             pace.setImg("tang");
             pace.setColor("#003371");

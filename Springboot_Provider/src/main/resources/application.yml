@@ -7,13 +7,15 @@ mybatis:
   type-aliases-package: com.softlab.common.model
 
 spring:
+  aop:
+    proxy-target-class: true
   redis:
     host: 127.0.0.1
     port: 6379
     password: 123
   datasource:
     name: xdzs
-    url: jdbc:mysql://139.196.75.14:3306/xdzs?useSSL=false&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://139.196.75.14:3306/xdzs?allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=utf-8
     username: root
     password: root
     # 使用druid数据源

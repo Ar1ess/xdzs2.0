@@ -62,7 +62,7 @@ public interface RedisService {
      * @param userPace
      * @return
      */
-    boolean zAdd(String openId, Integer userPace);
+    int zAdd(String openId, Integer userPace);
 
     /**
      * 获取单个排名

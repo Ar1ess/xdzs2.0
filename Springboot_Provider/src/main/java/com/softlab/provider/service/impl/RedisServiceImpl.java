@@ -100,6 +100,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public Object getPaceVoBean(String openId) {
+
         if (redisMapper.hasKey((PACE_PREFIX + openId))) {
             return redisMapper.get((PACE_PREFIX + openId));
         } else {
@@ -109,8 +110,15 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean zAdd(String openId, Integer userPace) {
-        return redisMapper.zAdd(PACE_SORT, openId, userPace);
+    public int zAdd(String openId, Integer userPace) {
+        if (redisMapper.zAdd(PACE_SORT, openId, userPace)) {
+            logger.info("1");
+            return 1;
+        } else {
+            logger.info("0");
+            return 0;
+        }
+        //return redisMapper.zAdd(PACE_SORT, openId, userPace);
     }
 
     @Override

@@ -12,6 +12,8 @@ import java.io.Serializable;
 @Data
 public class PaceVo extends Pace{
 
+    private Integer id;
+
     private String name;
 
     private String icon;
@@ -22,5 +24,9 @@ public class PaceVo extends Pace{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public PaceVo(Integer id) {
+        this.id = id;
     }
 }
